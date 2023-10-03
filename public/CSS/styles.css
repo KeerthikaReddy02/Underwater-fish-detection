@@ -1,0 +1,87 @@
+ html,body
+ {
+    margin: 0;
+    
+ }
+  .bg
+  {
+    background-color: black;
+  }
+  
+  .centered-element 
+  {
+    margin: 0;
+    text-align: center;
+  }
+
+  h1
+  {
+    font-family: 'Sora', sans-serif;
+    color: white;
+    padding: 1%;
+  }
+
+ .btn
+ {
+    color: black;
+    border-radius: 12px;
+    width: 15%; 
+    padding: 14px 14px 14px 14px;   
+    height: 50%;   
+    border: 0;  
+    text-align: center;
+    background-color: white;
+    font-family: 'Sora', sans-serif;
+ }
+ .btn:hover
+ {
+    background: linear-gradient(160deg, #2152FF 0%, #20BDFF 50%, #DFF2F9 100%);
+    color: white;
+    font-family: 'Sora', sans-serif;
+ }
+
+ .design
+ {
+    background: linear-gradient(160deg, #2152FF 0%, #20BDFF 50%, #DFF2F9 100%);
+    height: 100px;
+    display: block;
+    position: relative;
+    left:0;
+    right:0;
+    bottom:0;
+ }
+
+h4,h5,h6
+{
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+.image-upload>input 
+{
+   display: none;
+}
+
+.home
+{
+   color: black;
+   border-radius: 100px;
+   width: 3%; 
+   padding: 14px 14px 14px 14px;   
+   height: 5%;   
+   border: 0;  
+   text-align: center;
+   background-color: white;
+   font-family: 'Sora', sans-serif;
+   position:absolute;
+   top: 15px;
+   left: 15px;
+}
+
+.home:hover
+{
+   background: linear-gradient(160deg, #2152FF 0%, #20BDFF 50%, #DFF2F9 100%);
+   color: white;
+   font-family: 'Sora', sans-serif;
+}
+
