@@ -19,6 +19,10 @@ app.get('/analysis', function(req, res) {
     res.sendFile(__dirname + "/analysis.html");
 });
 
+app.get('/enhancement', function(req, res) {
+    res.sendFile(__dirname + "/enhancement.html");
+});
+
 app.post('/uploadedVideo', function(req, res) {
     console.log(req.body.videoFile);
     res.redirect('/analysis');
