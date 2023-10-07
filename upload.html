@@ -18,16 +18,16 @@
             <br><br><br><br><br><br><br>
             <h1>Underwater Species Detector</h1><br><br>
 
-            <form action="/uploadedVideo" method="POST">
+            <form action="/uploadedVideo" method="POST" enctype="multipart/form-data">
                 
             <div class="image-upload">
-                <label for="file-input">
+                <label for="files">
                     <div style="margin:auto;" class="btn">
                         <img src="Images/cloud.svg" alt="">
                         UPLOAD A VIDEO
                     </div>
                 </label>
-                <input id="file-input" type="file" name="videoFile" accept="video/mp4" required/>
+                <input id="files" type="file" name="file" accept="video/mp4,image/png, image/jpeg" required/>
             </div>
 
                 <br><br>
@@ -39,18 +39,6 @@
     <br><br>
     <footer class="design">
     </footer>
-    <script type="text/javascript">
-        function validateFileType() {
-            var fileName = document.getElementById("file-input").value;
-            var idxDot = fileName.lastIndexOf(".") + 1;
-            var extFile = fileName.substr(idxDot, fileName.length).toLowerCase();
-            if (extFile == "mp4") {
-                alert("Uploaded video! YAY")
-            } else {
-                alert("Only mp4 files are allowed! Select a file again.");
-            }
-        }
-    </script>
 </body>
 
 </html>

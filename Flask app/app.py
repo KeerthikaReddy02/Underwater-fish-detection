@@ -3,15 +3,20 @@ from ultralytics import YOLO
 from flask import Flask,render_template, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
-import os
-import cloudinary
-import cv2
-import cloudinary.uploader
-from dotenv import load_dotenv
+import base64
 
+import os
+# import cloudinary
+import cv2
+# import cloudinary.uploader
+# from dotenv import load_dotenv
+import numpy as np
+import json
+ 
 
 # Define a flask app
 app = Flask(__name__)
+cors = CORS(app, resources={r"/YOURAPP/*": {"origins": "*"}})
 
 # Load the model
 model = YOLO("bestNew.pt")
@@ -40,7 +45,9 @@ def predictVideo(video):
     files = os.listdir(directory)
     latest_file = files[0]
     print(latest_file)
-
+    dn = os.path.dirname(__file__)
+    dn = dn.replace('\\', '/')
+    # print(dn)
     path = directory + "/"+ latest_file
 
     # cloudinary.config(cloud_name = os.getenv('CLOUD_NAME'), api_key=os.getenv('API_KEY'), 
@@ -48,18 +55,122 @@ def predictVideo(video):
     # upload_result = cloudinary.uploader.upload(path)
     # app.logger.info(upload_result)
     # return jsonify(upload_result)
-    return "Success"
+    return {"path": dn+"/"+path, "filename": latest_file}
 
 @app.route('/')
 def index():
     return "Hello World"
 
 
-@app.route('/predict')
+@app.route('/predict', methods=['POST'])
 def predict():
-    video = "mygeneratedvideo_white_patch.mp4"
-    results = predictVideo(video)
+    # video = "mygeneratedvideo_white_patch.mp4"
+    data = request.get_json()
+    info = {'path': data.get('path')}
+    vid = info['path']
+
+    results = predictVideo(vid)
+    print(results)
+    # return results
+    # print(vid)
+    # print(vid['video'].response)
+    # print(vid['video'].filename)
+
     return results
+
+@app.route('/histeq')
+def histeq():
+    video = "Ephippidae.mp4"
+    vidObj = cv2.VideoCapture(video)
+    count = 0
+    success = 1
+    width= int(vidObj.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = vidObj.get(cv2.CAP_PROP_FPS)
+    print('frames per second =',fps)
+    video = cv2.VideoWriter('mygeneratedvideoHist.mp4', 0, fps, (width, height))
+    while success:
+
+        success, frame = vidObj.read()
+        
+        img_yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
+        img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0])
+        hist_eq = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+
+        count += 1
+        video.write(hist_eq)
+
+
+@app.route('/denoise')
+def denoise():
+    video = "Ephippidae.mp4"
+    vidObj = cv2.VideoCapture(video)
+    count = 0
+    success = 1
+    width= int(vidObj.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = vidObj.get(cv2.CAP_PROP_FPS)
+    print('frames per second =',fps)
+    video = cv2.VideoWriter('mygeneratedvideoDenoise.mp4', 0, fps, (width, height))
+    while success:
+
+        success, frame = vidObj.read()
+        dst = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 15)
+
+        count += 1
+        video.write(dst)
+
+
+@app.route('/clahe')
+def clahe():
+    video = "Ephippidae.mp4"
+    vidObj = cv2.VideoCapture(video)
+    count = 0
+    success = 1
+    width= int(vidObj.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = vidObj.get(cv2.CAP_PROP_FPS)
+    print('frames per second =',fps)
+    video = cv2.VideoWriter('mygeneratedvideoClahe.mp4', 0, fps, (width, height))
+    while success:
+
+        success, frame = vidObj.read()
+        hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        h, s, v = hsv_img[:,:,0], hsv_img[:,:,1], hsv_img[:,:,2]
+        clahe = cv2.createCLAHE(clipLimit = 10.0, tileGridSize = (8,8))
+        v = clahe.apply(v)
+        hsv_img = np.dstack((h,s,v))
+        rgb = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2RGB)
+
+        count += 1
+        video.write(rgb)
+
+
+@app.route('/sharpen')
+def sharpen():
+    video = "Ephippidae.mp4"
+    vidObj = cv2.VideoCapture(video)
+    count = 0
+    success = 1
+    width= int(vidObj.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = vidObj.get(cv2.CAP_PROP_FPS)
+    print('frames per second =',fps)
+    video = cv2.VideoWriter('mygeneratedvideoSharpen.mp4', 0, fps, (width, height))
+    while success:
+
+        success, frame = vidObj.read()
+        # Create the sharpening kernel
+        kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+        
+        # Sharpen the image
+        sharpened_image = cv2.filter2D(frame,-1,kernel)
+
+        count += 1
+        video.write(sharpened_image)
+
+
+
 
 
 if __name__ == '__main__':
