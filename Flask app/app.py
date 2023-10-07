@@ -4,6 +4,7 @@ from flask import Flask,render_template, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
 import base64
+from convert import FrameCapture 
 
 import os
 # import cloudinary
@@ -41,7 +42,7 @@ def predictVideo(video):
     sub_folders = [f for f in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, f))]
     latest_sub_folder = max(sub_folders, key=lambda x: os.path.getctime(os.path.join(folder_path, x)))
     directory = folder_path + "/" + latest_sub_folder
-    print(directory)
+    print(directory) 
     files = os.listdir(directory)
     latest_file = files[0]
     print(latest_file)
@@ -49,13 +50,18 @@ def predictVideo(video):
     dn = dn.replace('\\', '/')
     # print(dn)
     path = directory + "/"+ latest_file
+    newFileName = FrameCapture(path)
+    print(newFileName)
+    # newPath = directory +"/"+ newFileName
+    # print(newPath)
+    print(dn+"/"+newFileName)
 
     # cloudinary.config(cloud_name = os.getenv('CLOUD_NAME'), api_key=os.getenv('API_KEY'), 
     # api_secret=os.getenv('API_SECRET'))
     # upload_result = cloudinary.uploader.upload(path)
     # app.logger.info(upload_result)
     # return jsonify(upload_result)
-    return {"path": dn+"/"+path, "filename": latest_file}
+    return {"path": dn+"/"+newFileName, "filename": newFileName}
 
 @app.route('/')
 def index():
@@ -68,7 +74,6 @@ def predict():
     data = request.get_json()
     info = {'path': data.get('path')}
     vid = info['path']
-
     results = predictVideo(vid)
     print(results)
     # return results
