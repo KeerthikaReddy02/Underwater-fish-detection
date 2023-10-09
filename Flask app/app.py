@@ -3,8 +3,9 @@ from ultralytics import YOLO
 from flask import Flask,render_template, request
 from flask import jsonify
 from flask_cors import CORS, cross_origin
-import base64
+# import base64
 from convert import FrameCapture 
+import time
 
 import os
 # import cloudinary
@@ -74,6 +75,7 @@ def predict():
     data = request.get_json()
     info = {'path': data.get('path')}
     vid = info['path']
+    print(vid)
     results = predictVideo(vid)
     print(results)
     # return results
@@ -83,9 +85,13 @@ def predict():
 
     return results
 
-@app.route('/histeq')
+@app.route('/histeq', methods=['POST'])
 def histeq():
-    video = "Ephippidae.mp4"
+    
+    
+    data = request.get_json()
+    info = {'path': data.get('path')}
+    video = info['path']
     vidObj = cv2.VideoCapture(video)
     count = 0
     success = 1
@@ -93,22 +99,49 @@ def histeq():
     height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = vidObj.get(cv2.CAP_PROP_FPS)
     print('frames per second =',fps)
-    video = cv2.VideoWriter('mygeneratedvideoHist.mp4', 0, fps, (width, height))
+    newFileName = "mygeneratedvideoHist.mp4"
+
+    # try:
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(newFileName, fourcc , fps, (width, height))
     while success:
 
         success, frame = vidObj.read()
         
-        img_yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
-        img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0])
-        hist_eq = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+        if(frame is not None):
+            img_yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
+            img_yuv[:,:,0] = cv2.equalizeHist(img_yuv[:,:,0])
+            if(img_yuv is not None):
+                hist_eq = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
+                count += 1
+                video.write(hist_eq)
 
-        count += 1
-        video.write(hist_eq)
+    video.release()
+
+    print("going to sleep")
+    time.sleep(5)
+    print(newFileName)
+    results = predictVideo(newFileName)
+    return results
+    
+    # except:
+    #     print("Error")
+    #     print("Going to sleep")
+    #     time.sleep(20)
+    
+    # finally:  
+    #     print("Woke up")
+    #     results = predictVideo(newFileName)
+    #     return results
 
 
-@app.route('/denoise')
+
+@app.route('/denoise' , methods=['POST'])
 def denoise():
-    video = "Ephippidae.mp4"
+
+    data = request.get_json()
+    info = {'path': data.get('path')}
+    video = info['path']
     vidObj = cv2.VideoCapture(video)
     count = 0
     success = 1
@@ -116,19 +149,37 @@ def denoise():
     height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = vidObj.get(cv2.CAP_PROP_FPS)
     print('frames per second =',fps)
-    video = cv2.VideoWriter('mygeneratedvideoDenoise.mp4', 0, fps, (width, height))
+    newFileName = "mygeneratedvideoDenoise.mp4"
+
+    # try:
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(newFileName, fourcc , fps, (width, height))
     while success:
 
         success, frame = vidObj.read()
-        dst = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 15)
+        print("Frame reading")
+        
+        if(frame is not None):
+            dst = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 15)
+            if(dst is not None):
+                count += 1
+                video.write(dst)
 
-        count += 1
-        video.write(dst)
+    video.release()
+
+    print("going to sleep")
+    time.sleep(5)
+    print(newFileName)
+    results = predictVideo(newFileName)
+    return results
 
 
-@app.route('/clahe')
+@app.route('/clahe', methods=['POST'])
 def clahe():
-    video = "Ephippidae.mp4"
+
+    data = request.get_json()
+    info = {'path': data.get('path')}
+    video = info['path']
     vidObj = cv2.VideoCapture(video)
     count = 0
     success = 1
@@ -136,19 +187,64 @@ def clahe():
     height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = vidObj.get(cv2.CAP_PROP_FPS)
     print('frames per second =',fps)
-    video = cv2.VideoWriter('mygeneratedvideoClahe.mp4', 0, fps, (width, height))
+    newFileName = "mygeneratedvideoClahe.mp4"
+
+    # try:
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    video = cv2.VideoWriter(newFileName, fourcc , fps, (width, height))
     while success:
 
         success, frame = vidObj.read()
-        hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        h, s, v = hsv_img[:,:,0], hsv_img[:,:,1], hsv_img[:,:,2]
-        clahe = cv2.createCLAHE(clipLimit = 10.0, tileGridSize = (8,8))
-        v = clahe.apply(v)
-        hsv_img = np.dstack((h,s,v))
-        rgb = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2RGB)
+        
+        if(frame is not None):
+            hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            h, s, v = hsv_img[:,:,0], hsv_img[:,:,1], hsv_img[:,:,2]
+            clahe = cv2.createCLAHE(clipLimit = 10.0, tileGridSize = (8,8))
+            v = clahe.apply(v)
+            hsv_img = np.dstack((h,s,v))
+            if(hsv_img is not None):
+                rgb = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2RGB)
+                count += 1
+                video.write(rgb)
 
-        count += 1
-        video.write(rgb)
+    video.release()
+
+    print("going to sleep")
+    time.sleep(5)
+    print(newFileName)
+    results = predictVideo(newFileName)
+    return results
+    
+    # data = request.get_json()
+    # info = {'path': data.get('path')}
+    # video = info['path']
+    # vidObj = cv2.VideoCapture(video)
+    # count = 0
+    # success = 1
+    # width= int(vidObj.get(cv2.CAP_PROP_FRAME_WIDTH))
+    # height= int(vidObj.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # fps = vidObj.get(cv2.CAP_PROP_FPS)
+    # print('frames per second =',fps)
+    # newFileName = "mygeneratedvideoClahe.mp4"
+    # video = cv2.VideoWriter(newFileName, 0, fps, (width, height))
+    # while success:
+
+    #     success, frame = vidObj.read()
+    #     hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    #     h, s, v = hsv_img[:,:,0], hsv_img[:,:,1], hsv_img[:,:,2]
+    #     clahe = cv2.createCLAHE(clipLimit = 10.0, tileGridSize = (8,8))
+    #     v = clahe.apply(v)
+    #     hsv_img = np.dstack((h,s,v))
+    #     rgb = cv2.cvtColor(hsv_img, cv2.COLOR_HSV2RGB)
+
+    #     count += 1
+    #     video.write(rgb)
+
+    
+    # dn = os.path.dirname(__file__)
+    # dn = dn.replace('\\', '/')
+    # return {"path": dn+"/"+newFileName, "filename": newFileName}
+
 
 
 @app.route('/sharpen')

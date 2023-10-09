@@ -5,6 +5,7 @@ const axios = require('axios');
 const fileUpload= require("express-fileupload");
 const fs = require('fs');
 const fs1 = require('fs-extra');
+const { Console } = require('console');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -48,10 +49,11 @@ app.get('/enhancement', function(req, res) {
 
 app.post('/uploadedVideo', function(req, res) {
     // console.log(req.files.file);
+    console.log(req.body.enhancement);
     vid = req.files.file;
     if (!req.files)
         return res.status(400).send('No files were uploaded.');
-    path = 'C:/Users/WELCOME/Documents/Keerthi_documents/VIT related/VIT others/Research Paper- Underwater/Website/Flask app/' + req.files.file.name;
+    path = 'C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/Flask app' + req.files.file.name;
     // console.log(path)
     vid.mv(path, err => {
         if (err) {
@@ -61,34 +63,123 @@ app.post('/uploadedVideo', function(req, res) {
         console.log('File uploaded successfully');
     });
 
-    axios.post('http://127.0.0.1:5000/predict', {    
-        path: path,
-    }).then((response) => { 
-        resultsPath = response.data.path;
-        resultsName = response.data.filename;
-        console.log(resultsPath);
-        console.log(resultsName);
-        rp = 'C:/Users/WELCOME/Documents/Keerthi_documents/VIT related/VIT others/Research Paper- Underwater/Website/Public/Videos/'+resultsName ;
-        fs.rename(resultsPath, rp, function (err) 
-        { 
-            if (err) throw err; console.log('File Renamed!'); 
-            res.render("analysis", { resultsPath: resultsName });
-            // // Put a timeout for 2 seconds to allow the file to be renamed
-            // setTimeout(function() {
-            //     res.render("analysis", { resultsPath: req.files.file.name });
-            // }, 2000);
-        });
+    if (req.body.enhancement == "denoise") {
+        axios
+            .post("http://127.0.0.1:5000/denoise", {
+                path: path,
+            })
+            .then(
+                (response) => {
+                    resultsPath = response.data.path;
+                    resultsName = response.data.filename;
+                    console.log(resultsPath);
+                    console.log(resultsName);
+                    rp =
+                        "C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/public/Videos/" +
+                        resultsName;
+                    fs.rename(resultsPath, rp, function (err) {
+                        if (err) throw err;
+                        console.log("File Renamed!");
+                        res.render("analysis", { resultsPath: resultsName });
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+    } else if (req.body.enhancement == "histeq") {
+        axios
+            .post("http://127.0.0.1:5000/histeq", {
+                path: path,
+            })
+            .then(
+                (response) => {
+                    resultsPath = response.data.path;
+                    resultsName = response.data.filename;
+                    console.log(resultsPath);
+                    console.log(resultsName);
+                    rp =
+                        "C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/public/Videos/" +
+                        resultsName;
+                    fs.rename(resultsPath, rp, function (err) {
+                        if (err) throw err;
+                        console.log("File Renamed!");
+                        res.render("analysis", {
+                            resultsPath: resultsName,
+                        });
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+    } else if (req.body.enhancement == "whitebalancing") {
+        axios
+            .post("http://127.0.0.1:5000/clahe", {
+                path: path,
+            })
+            .then(
+                (response) => {
+                    resultsPath = response.data.path;
+                    resultsName = response.data.filename;
+                    console.log(resultsPath);
+                    console.log(resultsName);
+                    rp =
+                        "C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/public/Videos/" +
+                        resultsName;
+                    fs.rename(resultsPath, rp, function (err) {
+                        if (err) throw err;
+                        console.log("File Renamed!");
+                        res.render("analysis", { resultsPath: resultsName });
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+    } else if (req.body.enhancement == "none") {
+        axios
+            .post("http://127.0.0.1:5000/predict", {
+                path: path,
+            })
+            .then(
+                (response) => {
+                    resultsPath = response.data.path;
+                    resultsName = response.data.filename;
+                    console.log(resultsPath);
+                    console.log(resultsName);
+                    rp =
+                        "C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/public/Videos/" +
+                        resultsName;
+                    fs.rename(resultsPath, rp, function (err) {
+                        if (err) throw err;
+                        console.log("File Renamed!");
+                        res.render("analysis", { resultsPath: resultsName });
+                    });
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+    }
 
-        // fs1.move(resultsPath, rp, (err) => { 
-        //     if (err) return console.log(err); 
-        //     console.log('File successfully moved!!'); 
-        //     res.render("analysis", { resultsPath: req.files.file.name });
-        //   }); 
-        
 
-    }, (error) => {
-        console.log(error);
-    });
+    // axios.post('http://127.0.0.1:5000/histeq', {    
+    //     path: path,
+    // }).then((response) => { 
+    //     resultsPath = response.data.path;
+    //     resultsName = response.data.filename;
+    //     console.log(resultsPath);
+    //     console.log(resultsName);
+    //     rp = 'C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/public/Videos/'+resultsName ;
+    //     fs.rename(resultsPath, rp, function (err) 
+    //     { 
+    //         if (err) throw err; console.log('File Renamed!'); 
+    //         res.render("analysis", { resultsPath: resultsName });
+    //     });
+    // }, (error) => {
+    //     console.log(error);
+    // });
 });
 
 app.listen(process.env.PORT || 3000,function(){

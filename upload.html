@@ -1,44 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="CSS/styles.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Sora&display=swap"
+            rel="stylesheet"
+        />
+        <title>Underwater species detector</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="CSS/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sora&display=swap" rel="stylesheet">
-    <title>Underwater species detector</title>
-</head>
+    <body class="bg">
+        <div class="container">
+            <div class="centered-element">
+                <br /><br /><br /><br /><br /><br /><br />
+                <h1>Underwater Species Detector</h1>
+                <br /><br />
 
-<body class="bg">
-
-    <div class="container">
-        <div class="centered-element">
-            <br><br><br><br><br><br><br>
-            <h1>Underwater Species Detector</h1><br><br>
-
-            <form action="/uploadedVideo" method="POST" enctype="multipart/form-data">
-                
-            <div class="image-upload">
-                <label for="files">
-                    <div style="margin:auto;" class="btn">
-                        <img src="Images/cloud.svg" alt="">
-                        UPLOAD A VIDEO
+                <form
+                    action="/uploadedVideo"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                    <div class="image-upload">
+                        <label for="files">
+                            <div style="margin: auto" class="btn">
+                                <img src="Images/cloud.svg" alt="" />
+                                UPLOAD A VIDEO
+                            </div>
+                        </label>
+                        <input
+                            id="files"
+                            type="file"
+                            name="file"
+                            accept="video/mp4,image/png, image/jpeg"
+                            required
+                        />
                     </div>
-                </label>
-                <input id="files" type="file" name="file" accept="video/mp4,image/png, image/jpeg" required/>
+
+                    <div
+                        style="
+                            text-align: left;
+                            margin: 0 40% 0 40%;
+                            color: azure;
+                        "
+                    >
+                        <br /><br />
+                        <input
+                            type="radio"
+                            id="none"
+                            name="enhancement"
+                            value="none"
+                            checked
+                        />
+                        <label for="none">NONE</label><br />
+                        <input
+                            type="radio"
+                            id="whitebalancing"
+                            name="enhancement"
+                            value="whitebalancing"
+                        />
+                        <label for="whitebalancing">WHITE BALANCING</label
+                        ><br />
+                        <input
+                            type="radio"
+                            id="denoise"
+                            name="enhancement"
+                            value="denoise"
+                        />
+                        <label for="denoise">DENOISE</label><br />
+                        <input
+                            type="radio"
+                            id="histeq"
+                            name="enhancement"
+                            value="histeq"
+                        />
+                        <label for="histeq">HISTOGRAM EQUALIZATION</label><br />
+                        <br /><br />
+                    </div>
+
+                    <button
+                        onclick="validateFileType();"
+                        class="btn"
+                        type="submit"
+                    >
+                        SUBMIT
+                    </button>
+                </form>
             </div>
-
-                <br><br>
-                <button onclick="validateFileType();" class="btn" type="submit">SUBMIT</button>
-            </form>
-
         </div>
-    </div>
-    <br><br>
-    <footer class="design">
-    </footer>
-</body>
-
+        <br /><br />
+        <footer class="design"></footer>
+    </body>
 </html>
