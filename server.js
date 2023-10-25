@@ -53,7 +53,7 @@ app.post('/uploadedVideo', function(req, res) {
     vid = req.files.file;
     if (!req.files)
         return res.status(400).send('No files were uploaded.');
-    path = 'C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/Flask app' + req.files.file.name;
+    path = 'C:/UnderwaterDatasetFinal/mainWebsite/Underwater-fish-detection/Flask app/' + req.files.file.name;
     // console.log(path)
     vid.mv(path, err => {
         if (err) {
@@ -104,6 +104,7 @@ app.post('/uploadedVideo', function(req, res) {
                     fs.rename(resultsPath, rp, function (err) {
                         if (err) throw err;
                         console.log("File Renamed!");
+                        console.log(resultsPath);
                         res.render("analysis", {
                             resultsPath: resultsName,
                         });
@@ -154,6 +155,7 @@ app.post('/uploadedVideo', function(req, res) {
                     fs.rename(resultsPath, rp, function (err) {
                         if (err) throw err;
                         console.log("File Renamed!");
+                        console.log(resultsPath);
                         res.render("analysis", { resultsPath: resultsName });
                     });
                 },
