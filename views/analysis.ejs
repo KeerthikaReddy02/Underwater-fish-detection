@@ -27,13 +27,6 @@
         </div>
     </a>
 
-    <!-- <div class="whitebox">
-    </div> -->
-
-    <!-- <h5><%= resultsPath %></h5> -->
-    <!-- <img src="Images/<%= resultsPath %>" alt="Results image"> -->
-
-    <h5 style="color: white;"><%= resultsPath  %></h5>
 
     <div style="text-align:center;">
         <video width="1000" height="650" controls>
@@ -41,20 +34,61 @@
             <!-- fallback -->
             Your browser does not support the <code>video</code> element.
         </video>
+
+        <h1>Count of fishes</h1>
+        <h3>The Maximum,, Minimum and average number of Fishes seen in a frame are</h3>
+
     </div>
 
-    <br><br>
-    <div style="margin-left: 10%;">
-        <h4>Species</h4>
-        <h5>Info</h5>
-        <h4>Species</h4>
-        <h5>Info</h5>
-    </div>
-    <div  style="text-align:center;">
-        <button class="btn" type="submit">CREATE DATASET</button>
-    </div>
+    <table class="center">
+        <tr>
+            <th>Species Name</th>
+            <th>Maximum</th>
+            <th>Minimum</th>
+            <th>Average</th>
+        </tr>
+
+        <% for (let key in totalMaxCount) { %>
+            <tr>
+                <td> <%= key %> </td>
+                <td> <%= totalMaxCount[key] %> </td>
+                <td> <%= totalMinCount[key] %> </td>
+                <td> <%= avgCount[key] %> </td>
+            </tr>
+        <% } %>
+    </table>
 
     <br><br>
+    
+    <h1 style="text-align: center;">Species information</h1>
+    
+        <table class="center">
+            <tr>
+                <th>Name</th>
+                <th>Scientific Name</th>
+                <th>Scientific Classification</th>
+                <th>Description</th>
+                <th>Location</th>
+            </tr>
+            <% for(var species of info) { %>
+                <tr>
+                    <td> <%=species.Name %> </td>
+                    <td> <%=species.ScientificName%> </td>
+                    <td> Domain: <%=species.ScientificClassification.Domain%> <br>
+                        Kingdom: <%=species.ScientificClassification.Kingdom%>  <br>
+                        Phylum: <%=species.ScientificClassification.Phylum %> <br>
+                        Class: <%=species.ScientificClassification.Class %> <br>
+                        Family: <%=species.ScientificClassification.Family %> <br>
+                        Genus: <%=species.ScientificClassification.Genus%>  <br>
+                        Species: <%=species.ScientificClassification.Species%> </td>
+                    <td> <%=species.Description %> </td>
+                    <td> <%=species.Location %> </td>
+                </tr>
+            <% } %>
+        </table>
+        <br><br>
+
+        <br><br>
     <footer class="design">
     </footer>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
